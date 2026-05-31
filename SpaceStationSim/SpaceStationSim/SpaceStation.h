@@ -9,10 +9,16 @@
 class Module;
 class SpaceStation{
     public :
-    float oxygen  ;
-    float energy  ;
-    float water ;
-    
-    int population;
+    float oxygen  =100;
+    float energy  =100;
+    float water =100;
+    float SolarEfficiency= 1.0f;
+    int population=15;
+    int solarPanels=10;
+    //todo
+    int waterRecyclers=1;
+    int oxygenGenerator=1;
     std::vector<Module*>modules;
+    
+
 };

@@ -28,12 +28,15 @@ void SimulationEngine::init(){
     station->modules.push_back(new Greenhouse);
     
     events= new EventSystem();
+    solar = new SolarModule();
 }
 void SimulationEngine::update(){
+    solar-> update(*station);
+    
     lifeSupport->update(*station);
     population->update(*station);
     events->update(*station);
-    
+ 
     station->oxygen= std::clamp(station->oxygen,0.0f,100.0f);
     station->water=std::clamp(station->water,0.0f,100.0f);
     station->energy=std::clamp(station->energy,0.0f,100.0f);
@@ -44,6 +47,7 @@ void SimulationEngine::update(){
     <<"O2: "<<station->oxygen
     <<"WATER: "<<station->water
     <<"ENERGY: "<<station->energy
+    <<"SOLAR PANEl EFFICIENCY:" <<station->SolarEfficiency*100 <<"%"
     <<std::endl;
     
     if(station->population<=0){
@@ -59,6 +63,7 @@ void SimulationEngine::shutdown(){
     delete lifeSupport;
     delete population;
     delete events;
+    delete solar;
     for(Module* module :station->modules){
         delete module;
     }

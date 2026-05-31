@@ -19,6 +19,10 @@ void EventSystem::update(SpaceStation &station)
         station.oxygen-=15;
         station.water-=10;
         station.energy-=20;
+        
+        station.SolarEfficiency-=0.2f;
+        if(station.SolarEfficiency<0)
+            station.SolarEfficiency=0;
     }
     //3% probabilità
     else if(event <5){
