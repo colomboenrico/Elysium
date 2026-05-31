@@ -19,7 +19,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D9B2F2EC2FCB752F00307845 /* SpaceStationSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SpaceStationSim; sourceTree = BUILT_PRODUCTS_DIR; };
+		D98F058D2FCC2E150003CF57 /* SpaceStationSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SpaceStationSim; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,16 +45,8 @@
 			isa = PBXGroup;
 			children = (
 				D9B2F2EE2FCB752F00307845 /* SpaceStationSim */,
-				D9B2F2ED2FCB752F00307845 /* Products */,
+				D98F058D2FCC2E150003CF57 /* SpaceStationSim */,
 			);
-			sourceTree = "<group>";
-		};
-		D9B2F2ED2FCB752F00307845 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D9B2F2EC2FCB752F00307845 /* SpaceStationSim */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -79,7 +71,7 @@
 			packageProductDependencies = (
 			);
 			productName = SpaceStationSim;
-			productReference = D9B2F2EC2FCB752F00307845 /* SpaceStationSim */;
+			productReference = D98F058D2FCC2E150003CF57 /* SpaceStationSim */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -106,7 +98,7 @@
 			mainGroup = D9B2F2E32FCB752E00307845;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = D9B2F2ED2FCB752F00307845 /* Products */;
+			productRefGroup = D9B2F2E32FCB752E00307845;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

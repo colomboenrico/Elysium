@@ -7,6 +7,7 @@
 #include "SpaceStation.h"
 #include "LifeSupportSystem.h"
 #include "PopulationSystem.h"
+#include "EventSystem.h"
 #pragma once
 class SimulationEngine{
 public:
@@ -23,5 +24,6 @@ private:
     SpaceStation* station;
     LifeSupportSystem* lifeSupport;
     PopulationSystem* population;
+    EventSystem *events;
     
 };

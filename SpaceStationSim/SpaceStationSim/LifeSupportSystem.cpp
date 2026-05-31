@@ -8,8 +8,8 @@
 #include "LifeSupportSystem.h"
 #include "SpaceStation.h"
 void LifeSupportSystem::update(SpaceStation& station){
-    station.oxygen -= station.population *0.3f;
-    station.water -= station.population *0.2f;
+    station.oxygen -= station.population *0.2f;
+    station.water -= station.population *0.15f;
     station.energy -= station.population *0.1f;
     
     if(station.oxygen<0) station.oxygen=0;
