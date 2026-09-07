@@ -1,4 +1,4 @@
-# 🛰️ Space Station Elysium
+🛰️ Space Station Elysium
 
 Simulatore di una stazione spaziale ad anello, con motore di simulazione in **C++** e una dashboard web in stile **mission control** che mostra la telemetria in tempo reale. Tutto il sistema gira in **Docker Compose**: un container esegue la simulazione, l'altro serve l'interfaccia web — comunicano tra loro tramite un volume condiviso.
 
@@ -41,9 +41,9 @@ I due container comunicano tramite un volume Docker condiviso (`simdata`), senza
 
 ## Stack tecnico
 
-- **C++17** — motore di simulazione, build multi-stage con Docker (`gcc:13` per la build, `debian:bookworm-slim` per il runtime, linking statico di libstdc++)
+- **C++** — motore di simulazione, build multi-stage con Docker (`gcc:13` per la build, `debian:bookworm-slim` per il runtime, linking statico di libstdc++)
 - **Python / Flask** — API REST che espone lo stato della simulazione al frontend
-- **HTML/CSS/JS vanilla** — dashboard, grafici disegnati su `<canvas>` senza librerie esterne
+- **HTML/CSS/JS ** — dashboard, grafici disegnati su `<canvas>` senza librerie esterne
 - **Docker Compose** — orchestrazione dei due servizi
 
 ## Avvio
