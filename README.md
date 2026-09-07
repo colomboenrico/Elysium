@@ -1,6 +1,6 @@
 Space Station Elysium
 
-Simulatore di una stazione spaziale ad anello, con motore di simulazione in **C++** e una dashboard web in stile **mission control** che mostra la telemetria in tempo reale. Tutto il sistema gira in **Docker Compose**: un container esegue la simulazione, l'altro serve l'interfaccia web — comunicano tra loro tramite un volume condiviso.
+Simulatore di una stazione spaziale ad anello, con motore di simulazione in **C++** e una dashboard web in stile **mission control** che mostra la telemetria in tempo reale. Tutto il sistema gira in **Docker Compose**: un container esegue la simulazione, l'altro serve l'interfaccia web comunicano tra loro tramite un volume condiviso.
 
 ![Station banner](web/static/station.png)
 
@@ -8,7 +8,7 @@ Simulatore di una stazione spaziale ad anello, con motore di simulazione in **C+
 
 Ogni tick della simulazione aggiorna lo stato della stazione: ossigeno, acqua, energia, cibo, crediti, morale della popolazione ed efficienza dei pannelli solari. Diversi sistemi interagiscono tra loro — i pannelli solari alimentano l'energia, i generatori d'ossigeno e i riciclatori d'acqua mantengono l'equipaggio in vita, le fattorie producono cibo, parchi e centri ricreativi aumentano il morale, e l'economia genera crediti in base alla popolazione. Eventi casuali (meteoriti, guasti ai sistemi vitali, tempeste solari, arrivo di nuovi coloni) tengono la situazione dinamica.
 
-Un **sistema esperto basato su regole** (`AdvisorSystem`) analizza lo stato della stazione a ogni tick e restituisce un consiglio prioritario — ad esempio segnala scorte critiche prima ancora che diventino un problema, o suggerisce di investire i crediti in eccesso.
+Un **sistema esperto basato su regole** (`AdvisorSystem`) analizza lo stato della stazione a ogni tick e restituisce un consiglio prioritario  ad esempio segnala scorte critiche prima ancora che diventino un problema, o suggerisce di investire i crediti in eccesso.
 
 Dalla dashboard è possibile costruire nuove infrastrutture (pannelli solari, fattorie, riciclatori d'acqua, generatori d'ossigeno, parchi, appartamenti di lusso, centri d'intrattenimento) spendendo i crediti accumulati: il comando viene scritto dal server web, letto dalla simulazione C++ al tick successivo, ed eseguito se ci sono fondi sufficienti.
 
