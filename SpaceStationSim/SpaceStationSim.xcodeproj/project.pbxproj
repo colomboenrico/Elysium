@@ -19,12 +19,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D98F058D2FCC2E150003CF57 /* SpaceStationSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SpaceStationSim; sourceTree = BUILT_PRODUCTS_DIR; };
+		D98F058D2FCC2E150003CF57 /* SpaceStationSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = SpaceStationSim; path = /Users/enrico/Desktop/SpaceStationElysium/SpaceStationSim/build/Debug/SpaceStationSim; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D9E96D902FCE1D4900395018 /* Exceptions for "SpaceStationSim" folder in "SpaceStationSim" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+			);
+			target = D9B2F2EB2FCB752F00307845 /* SpaceStationSim */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D9B2F2EE2FCB752F00307845 /* SpaceStationSim */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D9E96D902FCE1D4900395018 /* Exceptions for "SpaceStationSim" folder in "SpaceStationSim" target */,
+			);
 			path = SpaceStationSim;
 			sourceTree = "<group>";
 		};
@@ -45,7 +57,6 @@
 			isa = PBXGroup;
 			children = (
 				D9B2F2EE2FCB752F00307845 /* SpaceStationSim */,
-				D98F058D2FCC2E150003CF57 /* SpaceStationSim */,
 			);
 			sourceTree = "<group>";
 		};
@@ -85,6 +96,7 @@
 				TargetAttributes = {
 					D9B2F2EB2FCB752F00307845 = {
 						CreatedOnToolsVersion = 26.3;
+						LastSwiftMigration = 2630;
 					};
 				};
 			};
@@ -236,16 +248,21 @@
 		D9B2F2F42FCB752F00307845 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
 		D9B2F2F52FCB752F00307845 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};

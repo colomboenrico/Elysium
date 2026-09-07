@@ -16,6 +16,7 @@ void EventSystem::update(SpaceStation &station)
     if(event<2)
     {
         std::cout <<"METEOR IMPACT !"<<std::endl;
+        station.lastEvent = "Meteor impact!";
         station.oxygen-=15;
         station.water-=10;
         station.energy-=20;
@@ -27,21 +28,25 @@ void EventSystem::update(SpaceStation &station)
     //3% probabilità
     else if(event <5){
         std::cout<<"LIFE SUPPORT FAILURE!"<<std::endl;
+        station.lastEvent = "Life support failure!";
         station.oxygen-=10;
     }
     //3% probabilità
     else if(event<8){
         std::cout<<"WATER LEAK!"<<std::endl;
+        station.lastEvent = "Water leak!";
         station.water-=15;
     }
     //3%probabilità
     else if(event<11){
         std::cout<<"SOLAR STORM!"<<std::endl;
+        station.lastEvent = "Solar storm!";
         station.energy-=25;
     }
     //2% probabilità
     else if(event <13){
         std::cout <<"NEW COLONISTS ARRIVED!"<<std::endl;
+        station.lastEvent = "New colonists arrived!";
         station.population+=5;
     }
 }

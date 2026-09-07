@@ -1,0 +1,22 @@
+services:
+  sim:
+    build:
+      context: .
+      dockerfile: SpaceStationSim/Dockerfile
+    volumes:
+      - simdata:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+    ports:
+      - "8080:8080"
+    volumes:
+      - simdata:/data
+    depends_on:
+      - sim
+    restart: unless-stopped
+
+volumes:
+  simdata:

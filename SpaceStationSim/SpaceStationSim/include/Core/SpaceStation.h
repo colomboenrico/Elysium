@@ -5,20 +5,43 @@
 //  Created by Enrico Colombo on 30/05/2026.
 //
 #pragma once
-#include<vector>
+#include <vector>
+#include <string>
 class Module;
 class SpaceStation{
     public :
-    float oxygen  =100;
-    float energy  =100;
-    float water =100;
-    float SolarEfficiency= 1.0f;
-    int population=15;
-    int solarPanels=10;
-    //todo
-    int waterRecyclers=1;
-    int oxygenGenerator=1;
-    std::vector<Module*>modules;
+    //risorse
+    float oxygen  ;
+    float energy  ;
+    float water ;
+    float food;
+  
     
+    float SolarEfficiency;
+    float solarProduction;
+    //popolazione
+    int population;
+    float morale = 1.0f;
+    //economia
+    float credits;
+    //moduli
+    int solarPanels;
+    //todo
+    int waterRecyclers;
+    int oxygenGenerator;
+    int farms;
+    
+    //lusso
+    int luxuryApartments;
+    int parks;
+    int entertaimentCenters;
+    
+    std::vector<Module*>modules;
+
+    //ultimo evento generato da EventSystem, usato dall'interfaccia web
+    std::string lastEvent = "";
+
+    //consiglio del sistema esperto di bordo (AdvisorSystem), mostrato nella dashboard
+    std::string advisorMessage = "Inizializzazione sistemi...";
 
 };

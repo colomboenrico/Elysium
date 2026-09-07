@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Space Station Elysium — Mission Control</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@500;600;700&display=swap');
+
+  :root {
+    --bg: #050708;
+    --panel: #0a0f0d;
+    --line: #1f2b24;
+    --text: #d8e6dc;
+    --dim: #5c7268;
+    --amber: #ffb020;
+    --green: #33ff8c;
+    --red: #ff4136;
+    --cyan: #4dd8ff;
+    --violet: #b98bff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Share Tech Mono', monospace;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px),
+      radial-gradient(ellipse at 50% -20%, #0f1a14 0%, var(--bg) 55%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 28px 20px 60px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  /* ---- header ---- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--green);
+    padding-bottom: 14px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .badge {
+    width: 44px; height: 44px;
+    border: 2px solid var(--amber);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    color: var(--amber);
+    font-size: 0.8rem;
+    position: relative;
+  }
+  .badge::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+  }
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    letter-spacing: 3px;
+    font-size: 1.4rem;
+    margin: 0;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  h1 small {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 4px;
+    font-size: 0.65rem;
+    color: var(--dim);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  #status-badge {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border: 1px solid var(--dim);
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  #status-badge.running { border-color: var(--green); color: var(--green); }
+  #status-badge.stopped { border-color: var(--red); color: var(--red); }
+  #status-badge.running::before,
+  #status-badge.stopped::before { content: "● "; }
+
+  /* ---- ring station banner ---- */
+  .station-banner {
+    border: 1px solid var(--line);
+    background: #000;
+    margin: 18px 0 22px;
+    overflow: hidden;
+    position: relative;
+  }
+  .station-banner svg, .station-banner img { display: block; width: 100%; height: auto; }
+  .station-banner .caption {
+    position: absolute;
+    bottom: 8px;
+    left: 14px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .infra-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .infra-node { opacity: 0.32; transition: opacity 0.4s ease; }
+  .infra-node.active { opacity: 1; }
+  .infra-node[data-type="solar"] { --node-color: var(--amber); }
+  .infra-node[data-type="water"] { --node-color: var(--green); }
+  .infra-node[data-type="oxygen"] { --node-color: var(--cyan); }
+  .infra-node[data-type="farm"] { --node-color: var(--violet); }
+  .infra-node[data-type="park"] { --node-color: var(--green); }
+  .infra-node[data-type="luxury"] { --node-color: var(--amber); }
+  .infra-node[data-type="entertainment"] { --node-color: var(--cyan); }
+  .infra-node .node-ring {
+    fill: rgba(0,0,0,0.55);
+    stroke: var(--node-color, var(--cyan));
+    stroke-width: 2;
+    r: 30px;
+  }
+  .infra-node .node-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    fill: var(--node-color, var(--cyan));
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+  .infra-node .node-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    fill: #fff;
+    text-anchor: middle;
+  }
+  .infra-node.pulse .node-ring { animation: node-pulse 0.9s ease-out; }
+  @keyframes node-pulse {
+    0%   { r: 30px; stroke-width: 2; }
+    30%  { r: 46px; stroke-width: 5; filter: drop-shadow(0 0 10px var(--node-color)); }
+    100% { r: 30px; stroke-width: 2; filter: none; }
+  }
+  .float-plus {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 24px;
+    font-weight: bold;
+    text-anchor: middle;
+    animation: float-up 1.2s ease-out forwards;
+  }
+  @keyframes float-up {
+    0%   { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-46px); opacity: 0; }
+  }
+  .station-banner.flash { animation: banner-flash 0.7s ease-out; }
+  @keyframes banner-flash {
+    0%   { box-shadow: 0 0 0 rgba(51,255,140,0); }
+    30%  { box-shadow: 0 0 30px rgba(51,255,140,0.45) inset; }
+    100% { box-shadow: 0 0 0 rgba(51,255,140,0); }
+  }
+  .build-btn.sending { box-shadow: 0 0 10px var(--green); border-color: var(--green); }
+
+  .meta {
+    color: var(--dim);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    margin: 0 0 18px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta b { color: var(--cyan); font-weight: 400; }
+
+  .event-banner {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--amber);
+    padding: 12px 16px;
+    margin-bottom: 22px;
+    font-size: 0.9rem;
+  }
+  .event-banner .label {
+    color: var(--dim);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .event-banner #last-event { color: var(--amber); }
+
+  .ai-panel {
+    background: #030a06;
+    border: 1px solid var(--green);
+    padding: 12px 16px;
+    margin-bottom: 22px;
+    font-size: 0.9rem;
+    position: relative;
+  }
+  .ai-panel .label {
+    color: var(--green);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .ai-panel .label::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: ai-blink 1.6s infinite;
+  }
+  @keyframes ai-blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .ai-panel #advisor-message { color: var(--green); }
+
+  .section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin: 26px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .grid.small { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    position: relative;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .panel::before, .panel::after {
+    content: "";
+    position: absolute;
+    width: 10px; height: 10px;
+    border-color: var(--dim);
+    border-style: solid;
+    opacity: 0.7;
+  }
+  .panel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+  .panel::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+  .panel.critical {
+    border-color: var(--red);
+    animation: pulse-critical 1.4s infinite;
+  }
+  @keyframes pulse-critical {
+    0%, 100% { box-shadow: 0 0 0px rgba(255,65,54,0); }
+    50% { box-shadow: 0 0 14px rgba(255,65,54,0.55); }
+  }
+
+  .panel .label {
+    font-family: 'Oswald', sans-serif;
+    color: var(--dim);
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .panel .value {
+    font-size: 1.9rem;
+    font-weight: 400;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px currentColor;
+    letter-spacing: 1px;
+  }
+  .gauge-track {
+    background: #000;
+    border: 1px solid var(--line);
+    height: 8px;
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    margin-bottom: 8px;
+  }
+  .gauge-track .seg { flex: 1; background: transparent; }
+  .gauge-track .seg.on { background: currentColor; box-shadow: 0 0 6px currentColor; }
+  .spark { width: 100%; height: 26px; display: block; opacity: 0.85; }
+
+  .stat-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .stat-row .value { font-size: 1.4rem; margin-bottom: 0; }
+
+  .infra-panel { text-align: center; }
+  .infra-panel .value { font-size: 1.6rem; }
+  .infra-panel .label { margin-bottom: 4px; }
+
+  /* ---- build panel ---- */
+  .build-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .build-btn {
+    background: #05100b;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px 10px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .build-btn:hover { background: rgba(51,255,140,0.1); }
+  .build-btn:active { transform: translateY(1px); }
+  .build-btn .cost { display: block; color: var(--amber); font-family: 'Share Tech Mono', monospace; margin-top: 4px; font-size: 0.75rem; }
+  .build-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ---- event log ---- */
+  .log-panel { background: var(--panel); border: 1px solid var(--line); padding: 4px 0; max-height: 220px; overflow-y: auto; }
+  .log-row { display: flex; gap: 12px; padding: 7px 16px; border-bottom: 1px solid var(--line); font-size: 0.8rem; }
+  .log-row:last-child { border-bottom: none; }
+  .log-row .t { color: var(--dim); flex-shrink: 0; }
+  .log-row .m { color: var(--text); }
+  .log-empty { padding: 16px; color: var(--dim); font-size: 0.8rem; }
+
+  footer {
+    text-align: center;
+    color: var(--dim);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="badge">SSE</div>
+      <h1>Space Station Elysium
+        <small>Mission Control &middot; Telemetry Feed</small>
+      </h1>
+    </div>
+    <div id="status-badge">Link acquiring...</div>
+  </header>
+
+  <div class="station-banner">
+    <img src="/static/station.png" alt="Orbital ring habitat">
+    <svg class="infra-overlay" viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <g class="infra-node" data-type="solar" data-x="640" data-y="26" transform="translate(640,26)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">SOL</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+      <g class="infra-node" data-type="farm" data-x="840" data-y="122" transform="translate(840,122)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">FARM</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+      <g class="infra-node" data-type="water" data-x="890" data-y="339" transform="translate(890,339)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">H2O</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+      <g class="infra-node" data-type="oxygen" data-x="751" data-y="513" transform="translate(751,513)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">O2</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+      <g class="infra-node" data-type="park" data-x="529" data-y="513" transform="translate(529,513)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">PARK</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+      <g class="infra-node" data-type="luxury" data-x="390" data-y="339" transform="translate(390,339)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">LUX</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+      <g class="infra-node" data-type="entertainment" data-x="440" data-y="122" transform="translate(440,122)">
+        <circle class="node-ring"/>
+        <text class="node-label" y="-8">ENT</text>
+        <text class="node-count" y="16">0</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="meta">
+    <span>MET TICK <b id="tick">000000</b></span>
+    <span>REFRESH <b>1s</b></span>
+  </div>
+
+  <div class="event-banner">
+    <span class="label">Last Telemetry Event</span>
+    <span id="last-event">No events logged yet.</span>
+  </div>
+
+  <div class="ai-panel">
+    <span class="label">Onboard AI &middot; Advisory System</span>
+    <span id="advisor-message">Inizializzazione sistemi...</span>
+  </div>
+
+  <div class="section-title">Life Support</div>
+  <div class="grid">
+    <div class="panel" style="color: var(--cyan);" id="oxygen-panel">
+      <div class="label">O2 &middot; Oxygen</div>
+      <div class="value" id="oxygen-value">--.-%</div>
+      <div class="gauge-track" id="oxygen-bar"></div>
+      <canvas class="spark" id="oxygen-spark"></canvas>
+    </div>
+    <div class="panel" style="color: var(--green);" id="water-panel">
+      <div class="label">H2O &middot; Water</div>
+      <div class="value" id="water-value">--.-%</div>
+      <div class="gauge-track" id="water-bar"></div>
+      <canvas class="spark" id="water-spark"></canvas>
+    </div>
+    <div class="panel" style="color: var(--amber);" id="energy-panel">
+      <div class="label">PWR &middot; Energy</div>
+      <div class="value" id="energy-value">--.-%</div>
+      <div class="gauge-track" id="energy-bar"></div>
+      <canvas class="spark" id="energy-spark"></canvas>
+    </div>
+    <div class="panel" style="color: var(--violet);" id="food-panel">
+      <div class="label">FOOD &middot; Rations</div>
+      <div class="value" id="food-value">--.-%</div>
+      <div class="gauge-track" id="food-bar"></div>
+      <canvas class="spark" id="food-spark"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Colony</div>
+  <div class="grid small">
+    <div class="panel"><div class="stat-row"><div class="label">Crew</div><div class="value" id="population-value">--</div></div></div>
+    <div class="panel"><div class="stat-row"><div class="label">Morale</div><div class="value" id="morale-value">--</div></div></div>
+    <div class="panel"><div class="stat-row"><div class="label">Solar Eff.</div><div class="value" id="solar-value">--</div></div></div>
+    <div class="panel"><div class="stat-row"><div class="label">Credits</div><div class="value" id="credits-value">--</div></div></div>
+  </div>
+
+  <div class="section-title">Infrastructure</div>
+  <div class="grid small">
+    <div class="panel infra-panel"><div class="label">Solar Panels</div><div class="value" id="infra-solar">--</div></div>
+    <div class="panel infra-panel"><div class="label">Water Recyclers</div><div class="value" id="infra-water">--</div></div>
+    <div class="panel infra-panel"><div class="label">O2 Generators</div><div class="value" id="infra-oxygen">--</div></div>
+    <div class="panel infra-panel"><div class="label">Farms</div><div class="value" id="infra-farms">--</div></div>
+    <div class="panel infra-panel"><div class="label">Parks</div><div class="value" id="infra-parks">--</div></div>
+    <div class="panel infra-panel"><div class="label">Luxury Apts.</div><div class="value" id="infra-luxury">--</div></div>
+    <div class="panel infra-panel"><div class="label">Entertainment</div><div class="value" id="infra-entertainment">--</div></div>
+    <div class="panel infra-panel"><div class="label">Modules</div><div class="value" id="modules-value">--</div></div>
+  </div>
+
+  <div class="section-title">Construction &middot; spend credits to expand the station</div>
+  <div class="build-grid">
+    <button class="build-btn" data-type="solar">Solar Panel <span class="cost">30 CR</span></button>
+    <button class="build-btn" data-type="farm">Farm <span class="cost">25 CR</span></button>
+    <button class="build-btn" data-type="water">Water Recycler <span class="cost">25 CR</span></button>
+    <button class="build-btn" data-type="oxygen">O2 Generator <span class="cost">25 CR</span></button>
+    <button class="build-btn" data-type="park">Park <span class="cost">20 CR</span></button>
+    <button class="build-btn" data-type="luxury">Luxury Apartment <span class="cost">40 CR</span></button>
+    <button class="build-btn" data-type="entertainment">Entertainment Ctr <span class="cost">35 CR</span></button>
+  </div>
+
+  <div class="section-title">Event Log</div>
+  <div class="log-panel" id="event-log">
+    <div class="log-empty">In attesa di eventi...</div>
+  </div>
+
+  <footer>SpaceStationSim &middot; C++ simulation core &middot; running in Docker</footer>
+</div>
+
+<script>
+const SEGMENTS = 24;
+const HISTORY_LEN = 60;
+const history = { oxygen: [], water: [], energy: [], food: [] };
+
+const INFRA_MAP = {
+  solar: "solarPanels",
+  farm: "farms",
+  water: "waterRecyclers",
+  oxygen: "oxygenGenerator",
+  park: "parks",
+  luxury: "luxuryApartments",
+  entertainment: "entertainmentCenters",
+};
+let previousInfra = null;
+
+function spawnFloatPlus(type, x, y, delta) {
+  const svg = document.querySelector(".infra-overlay");
+  if (!svg) return;
+  const ns = "http://www.w3.org/2000/svg";
+  const el = document.createElementNS(ns, "text");
+  el.setAttribute("class", "float-plus");
+  el.setAttribute("x", x);
+  el.setAttribute("y", y - 38);
+  el.style.fill = getComputedStyle(document.querySelector(`.infra-node[data-type="${type}"]`)).getPropertyValue("--node-color") || "#33ff8c";
+  el.textContent = "+" + delta;
+  svg.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+function triggerBuildEffect(type, delta) {
+  const node = document.querySelector(`.infra-node[data-type="${type}"]`);
+  if (!node) return;
+  node.classList.remove("pulse");
+  void node.offsetWidth;
+  node.classList.add("pulse");
+  const x = parseFloat(node.dataset.x);
+  const y = parseFloat(node.dataset.y);
+  spawnFloatPlus(type, x, y, delta);
+
+  const banner = document.querySelector(".station-banner");
+  if (banner) {
+    banner.classList.remove("flash");
+    void banner.offsetWidth;
+    banner.classList.add("flash");
+  }
+}
+
+function updateInfraNodes(d) {
+  const current = {};
+  for (const [type, field] of Object.entries(INFRA_MAP)) {
+    current[type] = d[field] || 0;
+  }
+  for (const [type, count] of Object.entries(current)) {
+    const node = document.querySelector(`.infra-node[data-type="${type}"]`);
+    if (!node) continue;
+    node.querySelector(".node-count").textContent = count;
+    node.classList.toggle("active", count > 0);
+    if (previousInfra !== null && count > previousInfra[type]) {
+      triggerBuildEffect(type, count - previousInfra[type]);
+    }
+  }
+  previousInfra = current;
+}
+
+function renderGauge(elId, pct) {
+  const track = document.getElementById(elId);
+  if (track.childElementCount !== SEGMENTS) {
+    track.innerHTML = "";
+    for (let i = 0; i < SEGMENTS; i++) {
+      const seg = document.createElement("div");
+      seg.className = "seg";
+      track.appendChild(seg);
+    }
+  }
+  const onCount = Math.round((Math.max(0, Math.min(100, pct)) / 100) * SEGMENTS);
+  [...track.children].forEach((seg, i) => {
+    seg.classList.toggle("on", i < onCount);
+  });
+}
+
+function drawSpark(canvasId, values, color) {
+  const canvas = document.getElementById(canvasId);
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth || 200;
+  const h = canvas.clientHeight || 26;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+  if (values.length < 2) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  values.forEach((v, i) => {
+    const x = (i / (HISTORY_LEN - 1)) * w;
+    const y = h - (Math.max(0, Math.min(100, v)) / 100) * h;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+}
+
+function setReadout(prefix, value, color) {
+  document.getElementById(prefix + "-value").textContent = value.toFixed(1) + "%";
+  renderGauge(prefix + "-bar", value);
+
+  const buf = history[prefix];
+  buf.push(value);
+  if (buf.length > HISTORY_LEN) buf.shift();
+  drawSpark(prefix + "-spark", buf, color);
+
+  const panel = document.getElementById(prefix + "-panel");
+  panel.classList.toggle("critical", value < 20);
+}
+
+function formatTick(t) {
+  return String(t).padStart(6, "0");
+}
+
+async function refresh() {
+  const badge = document.getElementById("status-badge");
+  try {
+    const res = await fetch("/api/state", { cache: "no-store" });
+    if (!res.ok) {
+      badge.textContent = "Awaiting Telemetry...";
+      badge.className = "";
+      return;
+    }
+    const d = await res.json();
+
+    document.getElementById("tick").textContent = formatTick(d.tick);
+    setReadout("oxygen", d.oxygen, "#4dd8ff");
+    setReadout("water", d.water, "#33ff8c");
+    setReadout("energy", d.energy, "#ffb020");
+    setReadout("food", d.food, "#b98bff");
+
+    document.getElementById("population-value").textContent = Math.round(d.population);
+    document.getElementById("morale-value").textContent = Math.round((d.morale || 0) * 100) + "%";
+    document.getElementById("solar-value").textContent = Math.round(d.solarEfficiency * 100) + "%";
+    document.getElementById("credits-value").textContent = Math.round(d.credits);
+
+    document.getElementById("infra-solar").textContent = d.solarPanels;
+    document.getElementById("infra-water").textContent = d.waterRecyclers;
+    document.getElementById("infra-oxygen").textContent = d.oxygenGenerator;
+    document.getElementById("infra-farms").textContent = d.farms;
+    document.getElementById("infra-parks").textContent = d.parks;
+    document.getElementById("infra-luxury").textContent = d.luxuryApartments;
+    document.getElementById("infra-entertainment").textContent = d.entertainmentCenters;
+    document.getElementById("modules-value").textContent = d.modules;
+
+    updateInfraNodes(d);
+
+    document.getElementById("last-event").textContent = d.lastEvent && d.lastEvent.length > 0
+      ? d.lastEvent
+      : "No events logged yet.";
+
+    document.getElementById("advisor-message").textContent = d.advisorMessage || "...";
+
+    if (d.running) {
+      badge.textContent = "Nominal";
+      badge.className = "running";
+    } else {
+      badge.textContent = "Station Failure";
+      badge.className = "stopped";
+    }
+  } catch (e) {
+    badge.textContent = "Signal Lost";
+    badge.className = "stopped";
+  }
+}
+
+async function refreshLog() {
+  const logPanel = document.getElementById("event-log");
+  try {
+    const res = await fetch("/api/events", { cache: "no-store" });
+    if (!res.ok) return;
+    const events = await res.json();
+    if (!events.length) {
+      logPanel.innerHTML = '<div class="log-empty">In attesa di eventi...</div>';
+      return;
+    }
+    logPanel.innerHTML = events.map(ev => `
+      <div class="log-row">
+        <span class="t">T+${String(ev.tick).padStart(6, "0")}</span>
+        <span class="m">${ev.message}</span>
+      </div>
+    `).join("");
+  } catch (e) { /* ignora, riprova al prossimo giro */ }
+}
+
+document.querySelectorAll(".build-btn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    btn.classList.add("sending");
+    setTimeout(() => btn.classList.remove("sending"), 500);
+    try {
+      await fetch("/api/build", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: btn.dataset.type })
+      });
+    } catch (e) { /* ignora */ }
+    setTimeout(() => { btn.disabled = false; }, 800);
+  });
+});
+
+refresh();
+refreshLog();
+setInterval(refresh, 1000);
+setInterval(refreshLog, 2000);
+</script>
+</body>
+</html>

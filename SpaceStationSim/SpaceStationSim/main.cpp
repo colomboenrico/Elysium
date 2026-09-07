@@ -22,6 +22,7 @@ int main(int argc, const char * argv[]) {
     
     while(engine.isRunning()){
         engine.update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(800));
     }
     engine.shutdown();
     return 0;
