@@ -1,4 +1,4 @@
-🛰️ Space Station Elysium
+Space Station Elysium
 
 Simulatore di una stazione spaziale ad anello, con motore di simulazione in **C++** e una dashboard web in stile **mission control** che mostra la telemetria in tempo reale. Tutto il sistema gira in **Docker Compose**: un container esegue la simulazione, l'altro serve l'interfaccia web — comunicano tra loro tramite un volume condiviso.
 
